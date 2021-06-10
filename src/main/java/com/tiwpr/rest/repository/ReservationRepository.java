@@ -1,7 +1,6 @@
 package com.tiwpr.rest.repository;
 
 import com.tiwpr.rest.model.dao.Client;
-import com.tiwpr.rest.model.dao.Hotel;
 import com.tiwpr.rest.model.dao.Reservation;
 import com.tiwpr.rest.model.dao.Room;
 import org.springframework.data.jpa.repository.JpaRepository;

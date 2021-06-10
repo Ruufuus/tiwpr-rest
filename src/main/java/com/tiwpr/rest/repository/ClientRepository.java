@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
     Optional<Client> findByClientId(Long clientId);
+
     Page<Client> findAll(Pageable pageable);
+
     List<Client> findAll();
 }

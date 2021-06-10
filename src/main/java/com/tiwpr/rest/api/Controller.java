@@ -19,7 +19,6 @@ import com.tiwpr.rest.repository.ClientRepository;
 import com.tiwpr.rest.repository.HotelRepository;
 import com.tiwpr.rest.repository.ReservationRepository;
 import com.tiwpr.rest.repository.RoomRepository;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -88,14 +87,14 @@ public class Controller {
 
     @PutMapping("/clients/{clientId}")
     public ResponseEntity<?> putClientByClientId(@RequestHeader(value = "If-Matching", required = false)
-                                                             String ifMatching, @PathVariable long clientId,
+                                                         String ifMatching, @PathVariable long clientId,
                                                  @Valid @RequestBody ClientDtoPut client) throws NoSuchAlgorithmException {
-        if (ifMatching != null){
+        if (ifMatching != null) {
             Optional<Client> clientOpt = clientRepository.findByClientId(clientId);
             if (clientOpt.isPresent()) {
                 byte[] bytesOfMessage = new ClientDtoGet(clientOpt.get()).toString().getBytes(StandardCharsets.UTF_8);
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                if (ifMatching.equals(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage)))){
+                if (ifMatching.equals(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage)))) {
                     clientOpt.get().setName(client.getName());
                     clientOpt.get().setSurname(client.getSurname());
                     AtomicBoolean isCorrectQuery = new AtomicBoolean(true);
@@ -230,7 +229,6 @@ public class Controller {
                 rm.getClients().add(clientOpt2.get());
                 clientOpt2.get().getReservations().add(rm);
             }
-            ;
         });
     }
 

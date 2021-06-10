@@ -25,11 +25,11 @@ public class Reservation {
     private List<Client> clients;
     private LocalDateTime date;
 
-    public Reservation(){
+    public Reservation() {
         this.clients = new ArrayList<>();
     }
 
-    public Reservation(ReservationDtoGet reservationDtoGet, RoomRepository roomRepository, ClientRepository clientRepository){
+    public Reservation(ReservationDtoGet reservationDtoGet, RoomRepository roomRepository, ClientRepository clientRepository) {
         this();
         this.reservationId = reservationDtoGet.getReservationId();
         this.date = reservationDtoGet.getDate();
@@ -40,7 +40,8 @@ public class Reservation {
             clientOpt.ifPresent(client -> this.clients.add(client));
         });
     }
-    public Reservation(ReservationDtoPut reservationDtoPut, long clientId, RoomRepository roomRepository, ClientRepository clientRepository){
+
+    public Reservation(ReservationDtoPut reservationDtoPut, long clientId, RoomRepository roomRepository, ClientRepository clientRepository) {
         this();
         this.date = reservationDtoPut.getDate();
         Optional<Room> roomOpt = roomRepository.findById(reservationDtoPut.getRoomId());
@@ -48,10 +49,10 @@ public class Reservation {
         reservationDtoPut.getClientIds().add(clientId);
         reservationDtoPut.getClientIds().forEach(id -> {
             Optional<Client> clientOpt = clientRepository.findByClientId(id);
-            if(clientOpt.isPresent()){
+            if (clientOpt.isPresent()) {
                 this.clients.add(clientOpt.get());
                 clientOpt.get().getReservations().add(this);
-            };
+            }
         });
     }
 }

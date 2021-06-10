@@ -23,37 +23,37 @@ public class Client {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "Client_Reservation",
-            joinColumns = { @JoinColumn(name = "client_id")},
-            inverseJoinColumns = { @JoinColumn(name = "reservation_id")}
+            joinColumns = {@JoinColumn(name = "client_id")},
+            inverseJoinColumns = {@JoinColumn(name = "reservation_id")}
     )
     private List<Reservation> reservations;
 
-    public Client(){
+    public Client() {
         this.reservations = new ArrayList<>();
     }
 
 
-    public Client(ClientDtoGet clientDtoGet, ReservationRepository reservationRepository){
+    public Client(ClientDtoGet clientDtoGet, ReservationRepository reservationRepository) {
         this();
         this.clientId = clientDtoGet.getClientId();
         this.name = clientDtoGet.getName();
         this.surname = clientDtoGet.getSurname();
         clientDtoGet.getReservations().forEach(reservationDTO -> {
-                Optional<Reservation> reservationOpt = reservationRepository.
-                        findByReservationId(reservationDTO);
+            Optional<Reservation> reservationOpt = reservationRepository.
+                    findByReservationId(reservationDTO);
             reservationOpt.ifPresent(reservation -> this.reservations.add(reservation));
         });
     }
 
 
-    public Client(ClientDtoPost clientDtoPost){
+    public Client(ClientDtoPost clientDtoPost) {
         this();
         this.name = clientDtoPost.getName();
         this.surname = clientDtoPost.getSurname();
         this.reservations = new ArrayList<>();
     }
 
-    public void changeReservationList(List<Reservation> newReservations){
+    public void changeReservationList(List<Reservation> newReservations) {
         this.reservations.removeAll(newReservations);
         this.reservations.forEach(this::removeClientFromReservation);
         this.reservations = newReservations;
@@ -65,7 +65,7 @@ public class Client {
     }
 
 
-    public void removeClientFromReservations(){
+    public void removeClientFromReservations() {
         this.reservations.forEach(reservation -> {
             removeClientFromReservation(reservation);
         });
@@ -75,9 +75,7 @@ public class Client {
         reservation.getClients().remove(this);
         reservation.getClients().forEach(client -> {
             client.getReservations().forEach(reservation1 -> {
-                if (reservation1.getClients().contains(this)){
-                    reservation1.getClients().remove(this);
-                }
+                reservation1.getClients().remove(this);
             });
         });
     }

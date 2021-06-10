@@ -19,7 +19,7 @@ public class RoomDtoGet {
     private Integer maxPeopleCount;
     private Integer price;
 
-    public RoomDtoGet(Room room){
+    public RoomDtoGet(Room room) {
         this.reservationsIds = new ArrayList<>();
         this.setRoomId(room.getRoomId());
         this.setMaxPeopleCount(room.getMaxPeopleCount());

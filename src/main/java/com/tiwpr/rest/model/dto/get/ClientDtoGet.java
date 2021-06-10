@@ -18,7 +18,7 @@ public class ClientDtoGet {
     private String surname;
     private List<Long> reservations;
 
-    public ClientDtoGet(Client client){
+    public ClientDtoGet(Client client) {
         this.reservations = new ArrayList<>();
         this.setClientId(client.getClientId());
         this.setName(client.getName());

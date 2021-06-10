@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
@@ -21,7 +19,7 @@ public class RoomDtoPost {
     @NotNull(message = "Room price must be set")
     private Integer price;
 
-    public RoomDtoPost(Room room){
+    public RoomDtoPost(Room room) {
         this.setMaxPeopleCount(room.getMaxPeopleCount());
         this.setName(room.getName());
         this.setPrice(room.getPrice());

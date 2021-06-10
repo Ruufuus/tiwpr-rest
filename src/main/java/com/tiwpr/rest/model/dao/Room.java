@@ -5,7 +5,6 @@ import com.tiwpr.rest.model.dto.post.RoomDtoPost;
 import com.tiwpr.rest.repository.HotelRepository;
 import com.tiwpr.rest.repository.ReservationRepository;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,11 +27,11 @@ public class Room {
     private Integer maxPeopleCount;
     private Integer price;
 
-    public Room(){
+    public Room() {
         this.reservations = new ArrayList<>();
     }
 
-    public Room(RoomDtoGet roomDtoGet, HotelRepository hotelRepository, ReservationRepository reservationRepository){
+    public Room(RoomDtoGet roomDtoGet, HotelRepository hotelRepository, ReservationRepository reservationRepository) {
         this();
         this.roomId = roomDtoGet.getRoomId();
         this.name = roomDtoGet.getName();
@@ -46,7 +45,7 @@ public class Room {
         hotelOpt.ifPresent(value -> this.hotel = value);
     }
 
-    public Room(RoomDtoPost roomDtoPost, long hotelId, HotelRepository hotelRepository){
+    public Room(RoomDtoPost roomDtoPost, long hotelId, HotelRepository hotelRepository) {
         this();
         this.name = roomDtoPost.getName();
         this.maxPeopleCount = roomDtoPost.getMaxPeopleCount();

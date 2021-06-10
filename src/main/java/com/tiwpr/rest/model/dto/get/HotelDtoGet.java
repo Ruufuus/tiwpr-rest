@@ -18,7 +18,7 @@ public class HotelDtoGet {
     private int starRating;
     private List<Long> roomsIds;
 
-    public HotelDtoGet(Hotel hotel){
+    public HotelDtoGet(Hotel hotel) {
         this.roomsIds = new ArrayList<>();
         this.setHotelId(hotel.getHotelId());
         this.setAddress(hotel.getAddress());

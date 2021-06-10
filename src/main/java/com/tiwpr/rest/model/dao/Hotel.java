@@ -4,7 +4,6 @@ import com.tiwpr.rest.model.dto.get.HotelDtoGet;
 import com.tiwpr.rest.model.dto.post.HotelDtoPost;
 import com.tiwpr.rest.repository.RoomRepository;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,12 +23,12 @@ public class Hotel {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hotel")
     private List<Room> rooms;
 
-    public Hotel(){
+    public Hotel() {
         this.rooms = new ArrayList<>();
     }
 
 
-    public Hotel(HotelDtoGet hotelDtoGet, RoomRepository roomRepository){
+    public Hotel(HotelDtoGet hotelDtoGet, RoomRepository roomRepository) {
         this();
         this.hotelId = hotelDtoGet.getHotelId();
         this.name = hotelDtoGet.getName();
@@ -41,7 +40,7 @@ public class Hotel {
         });
     }
 
-    public Hotel(HotelDtoPost hotelDtoPost){
+    public Hotel(HotelDtoPost hotelDtoPost) {
         this();
         this.name = hotelDtoPost.getName();
         this.address = hotelDtoPost.getAddress();
