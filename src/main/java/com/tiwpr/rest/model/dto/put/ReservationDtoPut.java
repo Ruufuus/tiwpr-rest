@@ -22,7 +22,7 @@ public class ReservationDtoPut {
 
     public ReservationDtoPut(Reservation reservation) {
         this.clientIds = new ArrayList<>();
-        this.setDate(reservation.getDate());
+        this.date = reservation.getDate();
         this.roomId = reservation.getRoom().getRoomId();
     }
 }

@@ -164,7 +164,7 @@ public class Controller {
         if (clientOpt.isPresent()) {
             List<ReservationDtoGet> reservations = new ArrayList<>();
             reservationRepository.findByClients(clientOpt.get())
-                    .forEach(reservation -> reservations.add(new ReservationDtoGet(reservation)));
+                    .forEach(reservation -> reservations.add(new ReservationDtoGet(reservation, hotelRepository)));
             return ResponseEntity.ok(reservations);
         } else {
             return ResponseEntity.notFound().build();
@@ -178,7 +178,7 @@ public class Controller {
             Optional<Reservation> reservationOpt = reservationRepository.
                     findByClientsAndReservationId(clientOpt.get(), reservationId);
             if (reservationOpt.isPresent())
-                return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get()));
+                return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get(), hotelRepository));
         }
         return ResponseEntity.notFound().build();
     }
@@ -210,18 +210,19 @@ public class Controller {
                 });
                 if (isCorrectQuery.get()) {
                     Reservation rm = reservationOpt.get();
-                    prepareRoom(clientId, reservation, rm);
+                    prepareReservation(clientId, reservation, rm);
                     reservationRepository.save(rm);
-                    return ResponseEntity.ok(new ReservationDtoGet(rm));
+                    return ResponseEntity.ok(new ReservationDtoGet(rm, hotelRepository));
                 }
             }
         }
         return ResponseEntity.notFound().build();
     }
 
-    private void prepareRoom(long clientId, ReservationDtoPut reservation, Reservation rm) {
+    private void prepareReservation(long clientId, ReservationDtoPut reservation, Reservation rm) {
         Optional<Room> roomOpt = roomRepository.findById(reservation.getRoomId());
         roomOpt.ifPresent(rm::setRoom);
+        rm.setDate(reservation.getDate());
         reservation.getClientIds().add(clientId);
         reservation.getClientIds().forEach(id -> {
             Optional<Client> clientOpt2 = clientRepository.findByClientId(id);
@@ -244,7 +245,7 @@ public class Controller {
     public List<ReservationDtoGet> getAllReservations() {
         List<ReservationDtoGet> reservationDtoGets = new ArrayList<>();
         reservationRepository.findAll()
-                .forEach(reservation -> reservationDtoGets.add(new ReservationDtoGet(reservation)));
+                .forEach(reservation -> reservationDtoGets.add(new ReservationDtoGet(reservation, hotelRepository)));
         return reservationDtoGets;
     }
 
@@ -252,7 +253,7 @@ public class Controller {
     public ResponseEntity<?> getReservationByReservationId(@PathVariable long reservationId) {
         Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
         if (reservationOpt.isPresent()) {
-            return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get()));
+            return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get(), hotelRepository));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -300,7 +301,7 @@ public class Controller {
             List<ReservationDtoGet> reservations = new ArrayList<>();
             rooms.forEach(room -> {
                 reservationRepository.findByRoom(room)
-                        .forEach(reservation -> reservations.add(new ReservationDtoGet(reservation)));
+                        .forEach(reservation -> reservations.add(new ReservationDtoGet(reservation, hotelRepository)));
             });
             return ResponseEntity.ok(reservations);
         } else {
@@ -319,7 +320,7 @@ public class Controller {
             rooms.forEach(room -> {
                 Optional<Reservation> reservationOpt = reservationRepository.findByRoomAndReservationId(room, reservationId);
                 reservationOpt.ifPresent(reservation -> {
-                    reservationDtoGet.set(new ReservationDtoGet(reservation));
+                    reservationDtoGet.set(new ReservationDtoGet(reservation, hotelRepository));
                     isReservationFound.set(true);
                 });
             });
@@ -350,7 +351,7 @@ public class Controller {
             Optional<Room> roomOpt = roomRepository.findByHotelAndRoomId(hotelOpt.get(), roomId);
             if (roomOpt.isPresent()) {
                 ArrayList<ReservationDtoGet> reservationDtoGets = new ArrayList<>();
-                reservationRepository.findByRoom(roomOpt.get()).forEach(reservation -> reservationDtoGets.add(new ReservationDtoGet(reservation)));
+                reservationRepository.findByRoom(roomOpt.get()).forEach(reservation -> reservationDtoGets.add(new ReservationDtoGet(reservation, hotelRepository)));
                 return ResponseEntity.ok(reservationDtoGets);
             }
         }
@@ -365,7 +366,7 @@ public class Controller {
             if (roomOpt.isPresent()) {
                 Optional<Reservation> reservationOpt = reservationRepository.findByRoomAndReservationId(roomOpt.get(), reservationId);
                 if (reservationOpt.isPresent()) {
-                    return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get()));
+                    return ResponseEntity.ok(new ReservationDtoGet(reservationOpt.get(), hotelRepository));
                 }
             }
         }
