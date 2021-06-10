@@ -103,6 +103,8 @@ public class Controller {
                         clientRepository.save(clientOpt.get());
                         bytesOfMessage = new ClientDtoGet(clientOpt.get()).toString().getBytes(StandardCharsets.UTF_8);
                         return ResponseEntity.ok().eTag(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage))).body(new ClientDtoGet(clientOpt.get()));
+                    }else{
+                        ResponseEntity.notFound().build();
                     }
                 }
                 return ResponseEntity.status(412).build();
@@ -223,12 +225,16 @@ public class Controller {
         Optional<Room> roomOpt = roomRepository.findById(reservation.getRoomId());
         roomOpt.ifPresent(rm::setRoom);
         rm.setDate(reservation.getDate());
-        reservation.getClientIds().add(clientId);
+        if(!reservation.getClientIds().contains(clientId)){
+            reservation.getClientIds().add(clientId);
+        }
         reservation.getClientIds().forEach(id -> {
             Optional<Client> clientOpt2 = clientRepository.findByClientId(id);
             if (clientOpt2.isPresent()) {
-                rm.getClients().add(clientOpt2.get());
-                clientOpt2.get().getReservations().add(rm);
+                if (!rm.getClients().contains(clientOpt2.get()))
+                    rm.getClients().add(clientOpt2.get());
+                if(!clientOpt2.get().getReservations().contains(rm))
+                    clientOpt2.get().getReservations().add(rm);
             }
         });
     }
