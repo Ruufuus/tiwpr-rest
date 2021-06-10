@@ -13,15 +13,17 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class ReservationDtoGet {
-    private long reservationId;
-    private long roomId;
+    private Long reservationId;
+    private Long roomId;
     private List<Long> clientIds;
     private LocalDateTime date;
 
     public ReservationDtoGet(Reservation reservation){
         this.clientIds = new ArrayList<>();
         this.setReservationId(reservation.getReservationId());
+        if (reservation.getDate() != null)
         this.setDate(reservation.getDate());
+        if (reservation.getRoom() != null)
         this.setRoomId(reservation.getRoom().getRoomId());
     reservation.getClients().forEach(client ->
             this.getClientIds().add(client.getClientId()));

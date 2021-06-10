@@ -19,7 +19,7 @@ public class HotelDtoPost {
     @NotBlank(message = "Hotel address must be filled")
     private String address;
     @NotNull(message = "Hotel star rating must be set")
-    private int starRating;
+    private Integer starRating;
 
     public HotelDtoPost(Hotel hotel){
         this.setAddress(hotel.getAddress());

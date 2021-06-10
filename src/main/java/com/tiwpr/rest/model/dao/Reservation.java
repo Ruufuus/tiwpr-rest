@@ -1,11 +1,10 @@
 package com.tiwpr.rest.model.dao;
 
 import com.tiwpr.rest.model.dto.get.ReservationDtoGet;
-import com.tiwpr.rest.model.dto.post.ReservationDtoPost;
+import com.tiwpr.rest.model.dto.put.ReservationDtoPut;
 import com.tiwpr.rest.repository.ClientRepository;
 import com.tiwpr.rest.repository.RoomRepository;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,13 +40,13 @@ public class Reservation {
             clientOpt.ifPresent(client -> this.clients.add(client));
         });
     }
-    public Reservation(ReservationDtoPost reservationDtoPost, long clientId, RoomRepository roomRepository, ClientRepository clientRepository){
+    public Reservation(ReservationDtoPut reservationDtoPut, long clientId, RoomRepository roomRepository, ClientRepository clientRepository){
         this();
-        this.date = reservationDtoPost.getDate();
-        Optional<Room> roomOpt = roomRepository.findById(reservationDtoPost.getRoomId());
+        this.date = reservationDtoPut.getDate();
+        Optional<Room> roomOpt = roomRepository.findById(reservationDtoPut.getRoomId());
         roomOpt.ifPresent(value -> this.room = value);
-        reservationDtoPost.getClientIds().add(clientId);
-        reservationDtoPost.getClientIds().forEach(id -> {
+        reservationDtoPut.getClientIds().add(clientId);
+        reservationDtoPut.getClientIds().forEach(id -> {
             Optional<Client> clientOpt = clientRepository.findByClientId(id);
             if(clientOpt.isPresent()){
                 this.clients.add(clientOpt.get());

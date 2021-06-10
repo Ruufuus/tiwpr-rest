@@ -1,6 +1,7 @@
 package com.tiwpr.rest.repository;
 
 import com.tiwpr.rest.model.dao.Client;
+import com.tiwpr.rest.model.dao.Hotel;
 import com.tiwpr.rest.model.dao.Reservation;
 import com.tiwpr.rest.model.dao.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByRoom(Room room);
 
+
     Optional<Reservation> findByReservationId(Long id);
 
     Optional<Reservation> findByClientsAndReservationId(Client client, Long reservationId);
+
+    Optional<Reservation> findByRoomAndReservationId(Room room, Long reservationId);
+
+    List<Reservation> findAll();
 }
