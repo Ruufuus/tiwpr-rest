@@ -103,7 +103,7 @@ public class Controller {
                         clientRepository.save(clientOpt.get());
                         bytesOfMessage = new ClientDtoGet(clientOpt.get()).toString().getBytes(StandardCharsets.UTF_8);
                         return ResponseEntity.ok().eTag(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage))).body(new ClientDtoGet(clientOpt.get()));
-                    }else{
+                    } else {
                         ResponseEntity.notFound().build();
                     }
                 }
@@ -128,23 +128,34 @@ public class Controller {
     }
 
     @PatchMapping("/clients/{clientId}")
-    public ResponseEntity<?> patchClientByClientId(@PathVariable long clientId, @RequestBody ClientDtoPut client) {
-        Optional<Client> clientOpt = clientRepository.findByClientId(clientId);
-        if (clientOpt.isPresent()) {
-            if (client.getName() != null)
-                clientOpt.get().setName(client.getName());
-            if (client.getSurname() != null)
-                clientOpt.get().setSurname(client.getSurname());
-            AtomicBoolean isCorrectQuery = new AtomicBoolean(true);
-            if (client.getReservations() != null) {
-                prepareClientNewReservationList(client, clientOpt.get(), isCorrectQuery);
+    public ResponseEntity<?> patchClientByClientId(@RequestHeader(value = "If-Matching", required = false)
+                                                           String ifMatching, @PathVariable long clientId, @RequestBody ClientDtoPut client) throws NoSuchAlgorithmException {
+        if (ifMatching != null) {
+            Optional<Client> clientOpt = clientRepository.findByClientId(clientId);
+            if (clientOpt.isPresent()) {
+                byte[] bytesOfMessage = new ClientDtoGet(clientOpt.get()).toString().getBytes(StandardCharsets.UTF_8);
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                if (ifMatching.equals(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage)))) {
+                    if (client.getName() != null)
+                        clientOpt.get().setName(client.getName());
+                    if (client.getSurname() != null)
+                        clientOpt.get().setSurname(client.getSurname());
+                    AtomicBoolean isCorrectQuery = new AtomicBoolean(true);
+                    if (client.getReservations() != null) {
+                        prepareClientNewReservationList(client, clientOpt.get(), isCorrectQuery);
+                    }
+                    if (isCorrectQuery.get()) {
+                        clientRepository.save(clientOpt.get());
+                        bytesOfMessage = new ClientDtoGet(clientOpt.get()).toString().getBytes(StandardCharsets.UTF_8);
+                        return ResponseEntity.ok().eTag(DatatypeConverter.printHexBinary(md.digest(bytesOfMessage))).body(new ClientDtoGet(clientOpt.get()));
+                    }
+                    return ResponseEntity.notFound().build();
+                }
+                return ResponseEntity.status(412).build();
             }
-            if (isCorrectQuery.get()) {
-                clientRepository.save(clientOpt.get());
-                return ResponseEntity.ok(new ClientDtoGet(clientOpt.get()));
-            }
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(403).build();
     }
 
     @DeleteMapping("/clients/{clientId}")
@@ -225,7 +236,7 @@ public class Controller {
         Optional<Room> roomOpt = roomRepository.findById(reservation.getRoomId());
         roomOpt.ifPresent(rm::setRoom);
         rm.setDate(reservation.getDate());
-        if(!reservation.getClientIds().contains(clientId)){
+        if (!reservation.getClientIds().contains(clientId)) {
             reservation.getClientIds().add(clientId);
         }
         reservation.getClientIds().forEach(id -> {
@@ -233,7 +244,7 @@ public class Controller {
             if (clientOpt2.isPresent()) {
                 if (!rm.getClients().contains(clientOpt2.get()))
                     rm.getClients().add(clientOpt2.get());
-                if(!clientOpt2.get().getReservations().contains(rm))
+                if (!clientOpt2.get().getReservations().contains(rm))
                     clientOpt2.get().getReservations().add(rm);
             }
         });
